@@ -87,61 +87,17 @@
 
 
     <div class="container-fluid">
-        <div class="row mb-5">
+        <div class="row mb-5" id="peliculas">
             <div class="col-12 mt-5">
                  <h3>Mi Lista</h3>
             </div>
-            <div class="col-sm-12 col-md-6 col-lg-2">
+            <div class="col-sm-12 col-md-6 col-lg-2 pelicula mb-3 mt-3">
                 <div class="card bg-dark text-white">
                   <img src="https://place-hold.it/300x300?text=Something Here" class="card-img" alt="...">
                   <div class="card-img-overlay">
                     <h5 class="card-title">Película</h5>
                     <p class="card-text">This is a wider card </p>
-                  </div>
-                </div>
-            </div>
-            <div class="col-sm-12 col-md-6 col-lg-2">
-                <div class="card bg-dark text-white">
-                  <img src="https://place-hold.it/300x300?text=Something Here" class="card-img" alt="...">
-                  <div class="card-img-overlay">
-                    <h5 class="card-title">Película</h5>
-                    <p class="card-text">This is a wider card </p>
-                  </div>
-                </div>
-            </div>
-            <div class="col-sm-12 col-md-6 col-lg-2">
-                <div class="card bg-dark text-white">
-                  <img src="https://place-hold.it/300x300?text=Something Here" class="card-img" alt="...">
-                  <div class="card-img-overlay">
-                    <h5 class="card-title">Película</h5>
-                    <p class="card-text">This is a wider card </p>
-                  </div>
-                </div>
-            </div>
-            <div class="col-sm-12 col-md-6 col-lg-2">
-                <div class="card bg-dark text-white">
-                  <img src="https://place-hold.it/300x300?text=Something Here" class="card-img" alt="...">
-                  <div class="card-img-overlay">
-                    <h5 class="card-title">Película</h5>
-                    <p class="card-text">This is a wider card </p>
-                  </div>
-                </div>
-            </div>
-            <div class="col-sm-12 col-md-6 col-lg-2">
-                <div class="card bg-dark text-white">
-                  <img src="https://place-hold.it/300x300?text=Something Here" class="card-img" alt="...">
-                  <div class="card-img-overlay">
-                    <h5 class="card-title">Película</h5>
-                    <p class="card-text">This is a wider card </p>
-                  </div>
-                </div>
-            </div>
-            <div class="col-sm-12 col-md-6 col-lg-2">
-                <div class="card bg-dark text-white">
-                  <img src="https://place-hold.it/300x300?text=Something Here" class="card-img" alt="...">
-                  <div class="card-img-overlay">
-                    <h5 class="card-title">Película</h5>
-                    <p class="card-text">This is a wider card </p>
+                    <a href="" class="btn btn-danger movie-link" id="">Ver ahora</a>
                   </div>
                 </div>
             </div>
@@ -225,7 +181,25 @@
         </div> <!-- //.row -->
     </div> <!-- //.container-fluid -->
 
-   
+    <div class="container" id="playMovie">
+      <div class="row mt-5">
+
+        <div class="col-12 border-bottom">
+          <h2 id="titulo"></h2>
+        </div> <!-- .//col -->
+
+        <div class="col-sm-12 col-md-12 col-lg-8">
+          <iframe width="750" height="400" src="" frameborder="0" allowfullscreen=""></iframe>
+          <h3>Descripción</h3>
+          <p id="descripcion"></p>
+        </div> <!-- //.col -->
+
+        <div class="col-sm-12 col-md-12 col-lg-4">
+          <img src="" alt="" id="imagen" class="img-responsive">
+        </div> <!-- //.col -->
+
+      </div> <!-- .//.row -->
+    </div> <!-- //.container -->
 
 
     <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js" integrity="sha384-DfXdz2htPH0lsSSs5nCTpuj/zy4C+OGpamoFVy38MVBnE+IbbVYUew+OrCXaRkfj" crossorigin="anonymous"></script>
@@ -235,6 +209,56 @@
         $('.carousel').carousel({
             interval: 3000
         })
+    </script>
+    <script>
+      var ajax = new XMLHttpRequest();
+      ajax.open("GET", "peliculas.json");
+      ajax.onload = function() {
+        if( this.status == 200 ){
+          peliculas = JSON.parse( this.responseText );
+          var listadoPeliculas = document.querySelector("#peliculas");
+          var ficha = document.querySelector(".pelicula").cloneNode(true);
+
+          listadoPeliculas.innerHTML = "";
+
+          peliculas.forEach(function(pelicula){
+            var nodo = ficha.cloneNode(true);
+            nodo.querySelector("img").src = pelicula.Poster;
+            nodo.querySelector("h5").innerText = pelicula.Titulo;
+            nodo.querySelector("p").innerText = pelicula.Estreno;
+            nodo.querySelector("a").id = pelicula.idPelicula;
+            nodo.querySelector("a").onclick = reproducir;
+
+            listadoPeliculas.append( nodo );
+          });
+        }
+      }
+      ajax.send();
+
+
+
+      var playMovie = document.querySelector("#playMovie");
+      playMovie.style.display = "none";
+
+      function reproducir(e){
+        e.preventDefault();
+
+        playMovie.style.display = "block";
+
+        peliculas.forEach(function(pelicula){
+
+          if (pelicula.idPelicula == e.target.id) {
+            document.querySelector("iframe").src = pelicula.Trailer;
+            document.querySelector("#titulo").innerText = pelicula.Titulo + " (" + pelicula.Estreno + ")";
+            document.querySelector("#descripcion").innerHTML = pelicula.Descripcion;
+            document.querySelector("#imagen").src = pelicula.Poster;
+            return;
+          }
+        });
+        window.scroll({ top : playMovie.offsetTop, behavior : "smooth" });
+
+      }
+
     </script>
 
 </body>
